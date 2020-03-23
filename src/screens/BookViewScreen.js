@@ -9,8 +9,7 @@ import { connect } from 'react-redux';
 class BookViewScreen extends Component{
 
   render(){
-    const {title, cover, audios, author, narrator, description} = this.props.navigation.state.params;
-
+    const {title, cover, audios, author, narrator, description, Runtime, Tapedby} = this.props.navigation.state.params;
     return (
       <Container style={{backgroundColor: PRIMARY_BACKGROUND_COLOR}}>
         <Header transparent iosBarStyle={"light-content"}>
@@ -58,25 +57,21 @@ class BookViewScreen extends Component{
 
 
           </View>
-          <View style={styles.infoRow}>
-            <Text style={{color: PRIMARY_FONT_COLOR}}>Download</Text>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Download')} transparent><Ionicons style={{color: PRIMARY_FONT_COLOR}} name="ios-cloud-download" size={26}/></TouchableOpacity>
-          </View>
 
           <View style={styles.infoRow}>
             <Text style={{color: PRIMARY_FONT_COLOR}}>Listening length</Text>
-            <Text style={{color: PRIMARY_FONT_COLOR}}>2 hours 32 mins</Text>
+            <Text style={{color: PRIMARY_FONT_COLOR}}>{Runtime ? Runtime : '-'}</Text>
           </View>
 
           <View style={styles.infoRow}>
             <Text style={{color: PRIMARY_FONT_COLOR}}>Taped By</Text>
-            <Text style={{color: PRIMARY_FONT_COLOR}}>Manjil Tamang</Text>
+            <Text style={{color: PRIMARY_FONT_COLOR}}>{Tapedby ? Tapedby.trim() : '-'}</Text>
           </View>
 
           <View style={{marginBottom: 30}}>
             <Text style={{color: PRIMARY_FONT_COLOR}}>About the book</Text>
-            <Text style={{color: FADE_COLOR}}>
-              {description}
+            <Text style={{color: FADE_COLOR, lineHeight: 20}}>
+              {description.slice(0, description.lastIndexOf(".")+1)}
             </Text>
           </View>
 
@@ -90,11 +85,11 @@ const styles = StyleSheet.create({
   image: {
     shadowColor: "#000",
     shadowOffset:{
-    width: 0,
-    height: 5,
+      width: 0,
+      height: 5,
     },
     shadowOpacity: 0.36,
-    shadowRadius: 6.68,
+    shadowRadius: 6.68
   },
   starWrapper: {
     flexDirection: 'row',

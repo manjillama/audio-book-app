@@ -1,11 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { StyleSheet, Text, Image, View, TouchableOpacity, Slider } from 'react-native';
-import { Container, Header, Content, Button, Icon } from 'native-base';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Container, Header, Content, Button, Icon, Title } from 'native-base';
+import { Ionicons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import Spinner from './Spinner';
 import { PRIMARY_COLOR, PRIMARY_FONT_COLOR, FADE_COLOR } from '../constants/Colors';
+import FlipCard from 'react-native-flip-card'
+import MediaList from './MediaList';
 
 export default (props) =>{
+  const [flip, setFlip] = useState(false);
 
   function msToTime(ms) {
     var h = Math.floor(ms/1000/60/60);
@@ -14,11 +17,42 @@ export default (props) =>{
     return h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
   }
 
-  const { isPlaying, isLoaded, isBuffering, audioPosition, audioDuration, media, _getSeekSliderPosition,  _onSeekSliderSlidingComplete, onPlayPausePressed, playNext, playPrevious} = props;
-  const { title, author, cover } = media;
+  const { isPlaying, isLoaded, isBuffering, audioPosition, audioDuration, media, _getSeekSliderPosition,  _onSeekSliderSlidingComplete, onPlayPausePressed, playNext, playPrevious, bottomSheetRef} = props;
+  const { info: { title, author, cover }, currentlyPlaying } = media;
+
+  const chapter = currentlyPlaying.title;
 
   return (
-    <View>
+    <FlipCard
+      flip={flip}
+      friction={6}
+      perspective={1000}
+      flipHorizontal={true}
+      flipVertical={false}
+      clickable={false}
+    >
+      <View>
+        {faceSize()}
+      </View>
+      <View>
+        {backSide()}
+      </View>
+    </FlipCard>
+
+  )
+
+
+  function faceSize(){
+    return (
+      <View>
+        <View style={{marginVertical: 16, justifyContent: 'space-between', flexDirection: 'row'}}>
+          <Button onPress={() => bottomSheetRef.current.snapTo(1)} style={{padding: 12, height: 35}} transparent>
+            <Ionicons name="ios-arrow-down" size={28} style={{color: PRIMARY_FONT_COLOR}}></Ionicons>
+          </Button>
+          <Button onPress={() => setFlip(true)} style={{padding: 12, height: 35}} transparent>
+            <Ionicons name="ios-list" size={24} style={{color: PRIMARY_FONT_COLOR}}></Ionicons>
+          </Button>
+        </View>
         <View style={{
           alignItems: 'center', marginBottom: 20,
           shadowColor: "#000",
@@ -35,6 +69,7 @@ export default (props) =>{
         <View style={{alignItems: 'center'}}>
           <Text style={{fontWeight: 'bold', fontSize: 24, color: PRIMARY_FONT_COLOR}} numberOfLines={1}>{title}</Text>
           <Text style={{color: PRIMARY_COLOR, marginVertical: 4, fontSize: 16}}>{author}</Text>
+          <Text style={{color: FADE_COLOR}}>{chapter}</Text>
         </View>
 
         <View style={{alignItems: 'center', marginVertical: 20}}>
@@ -67,7 +102,25 @@ export default (props) =>{
           }
         </View>
       </View>
-  )
+    )
+  }
+
+  function backSide(){
+    return (
+      <View>
+        <View style={{marginVertical: 16, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+          <Button onPress={() => bottomSheetRef.current.snapTo(1)} style={{padding: 6, height: 34}} transparent>
+            <Ionicons name="ios-arrow-down" size={28} style={{color: PRIMARY_FONT_COLOR}}></Ionicons>
+          </Button>
+          <Title style={{color: PRIMARY_FONT_COLOR}}>Chapters</Title>
+          <Button onPress={() => setFlip(false)} style={{padding: 6, height: 34}} transparent>
+            <AntDesign name="back" size={24} style={{color: PRIMARY_FONT_COLOR}}></AntDesign>
+          </Button>
+        </View>
+        <MediaList setFlip={setFlip}/>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

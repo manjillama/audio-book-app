@@ -15,8 +15,6 @@ import SearchScreen from './src/screens/SearchScreen';
 import MyBooksScreen from './src/screens/MyBooksScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import BookViewScreen from './src/screens/BookViewScreen';
-import SeeAllListScreen from './src/screens/SeeAllListScreen';
-import DownloadScreen from './src/screens/DownloadScreen';
 import AboutScreen from './src/screens/about/AboutScreen';
 
 
@@ -62,19 +60,22 @@ const switchNavigator = createSwitchNavigator({
     Home: createStackNavigator({
       Home: HomeScreen,
       BookView: BookViewScreen,
-      Download: DownloadScreen,
-      SeeAllList: SeeAllListScreen
     },{
       headerMode: 'none'
     }),
-    Search: SearchScreen,
-    MyBooks: MyBooksScreen,
-    Profile: createStackNavigator({
-      Profile: ProfileScreen,
-      About: AboutScreen
+    Search: createStackNavigator({
+      Search: SearchScreen,
+      BookView: BookViewScreen,
     },{
       headerMode: 'none'
     }),
+    // MyBooks: MyBooksScreen,
+    // Profile: createStackNavigator({
+    //   Profile: ProfileScreen,
+    //   About: AboutScreen
+    // },{
+    //   headerMode: 'none'
+    // }),
   },{
     tabBarComponent: props => (
       <View>

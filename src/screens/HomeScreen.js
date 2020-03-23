@@ -13,28 +13,61 @@ class HomeScreen extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      audioBooks: DATA
+      audioBooks: [],
+      scroll: 1,
+      listSize: 14,
+      message: null
     };
   }
 
+  isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
+  };
+
+  componentDidMount(){
+    const {scroll, listSize} = this.state;
+    this.setState({audioBooks: DATA.slice(0, scroll*listSize), scroll: scroll + 1});
+  }
+
+  onScrollToEnd = () => {
+    const {scroll, listSize, audioBooks} = this.state;
+    const newList = [...DATA.slice(audioBooks.length, scroll*listSize)];
+    if(newList.length > 0){
+      this.setState({
+        audioBooks: [...audioBooks, ...newList],
+        scroll: scroll + 1});
+    }else{
+      this.setState({
+        message: 'Reached the end on list :('
+      })
+    }
+  }
+
   render(){
-    const { audioBooks } = this.state;
+    const { audioBooks, message } = this.state;
     return (
     <Container style={{backgroundColor: PRIMARY_BACKGROUND_COLOR}}>
       <Header transparent style={{backgroundColor: '#191919', borderBottomWidth: 0}} iosBarStyle={"light-content"}>
         <Body style={{marginLeft: 5, flexDirection: 'row', alignItems: 'center'}}>
-          <Image source={require('../../assets/logo.png')} resizeMode="contain" style={{height: 150, width: 150}}/>
+          <H1 style={{color: PRIMARY_FONT_COLOR, fontWeight: 'bold'}}>Welcome</H1>
         </Body>
 
         <Right/>
       </Header>
-      <Content style={{paddingTop: 30}}>
+      <Content style={{paddingTop: 30}}
+        onScroll={({ nativeEvent }) => {
+          if (this.isCloseToBottom(nativeEvent)) {
+            this.onScrollToEnd();
+          }
+        }}
+      >
         <Grid>
           <Row>
             <Col style={styles.listPanel}>
               <View>
                 <View style={styles.panelHeader}>
                   <H1 style={styles.panelTitle}>For you</H1>
+                  <Text style={{color: PRIMARY_FONT_COLOR, fontWeight: 'bold'}}>{DATA.length} books in total</Text>
                 </View>
                 <View style={{flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -42,7 +75,7 @@ class HomeScreen extends Component{
                 flex: 1}}>
                   {
                     audioBooks.map(book => (
-                      <TouchableOpacity style={{marginBottom: 15}} key={book.Identifier} onPress={() => this.props.navigation.navigate('BookView', book)}>
+                      <TouchableOpacity style={{marginBottom: 25}} key={book.Identifier} onPress={() => this.props.navigation.navigate('BookView', book)}>
                         <Image
                             source={{uri: book.cover}}
                             style={styles.panelImage}
@@ -53,6 +86,9 @@ class HomeScreen extends Component{
                     ))
                   }
                 </View>
+                {
+                  message && <Text style={{color: PRIMARY_FONT_COLOR, padding:15, backgroundColor: '#191919', textAlign: 'center'}}>{message}</Text>
+                }
               </View>
             </Col>
           </Row>
@@ -74,10 +110,10 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   panelHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
     marginRight: 15,
-    alignItems: 'center',
+    // alignItems: 'center',
     marginLeft: 15,
     marginBottom: 15,
   },
@@ -95,7 +131,8 @@ const styles = StyleSheet.create({
     width: width/2-23,
     height: width/2-23,
     marginLeft: 15,
-    borderRadius: 6
+    borderRadius: 6,
+    backgroundColor: '#191919'
   },
   panelImageRounded: {
     height:width/2.7,

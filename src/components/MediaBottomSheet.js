@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Image, TouchableOpacity } from 'react-native';
+import { Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
 import { Button } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet from 'reanimated-bottom-sheet'
@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import { updateMedia } from '../actions/media';
 import { toggleBottomTabs } from '../actions/showBottomTabs';
 import { PRIMARY_FONT_COLOR  } from '../constants/Colors';
-
 
 const { height } = layout.window;
 class MediaBottomSheet extends React.Component{
@@ -57,13 +56,17 @@ class MediaBottomSheet extends React.Component{
     this.audio.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
 
     await this.audio.loadAsync({uri: this.state.audioSrc});
+    this.audio.playAsync();
   }
 
   componentWillUnmount(){
     this.audio.unloadAsync();
   }
 
-  _onPlaybackStatusUpdate({isPlaying, isBuffering, positionMillis, durationMillis, isLoaded}){
+  _onPlaybackStatusUpdate({isPlaying, isBuffering, positionMillis, durationMillis, isLoaded, didJustFinish}){
+    if(didJustFinish)
+      return this.playNext();
+
     this.setState({
       isLoaded,
       isPlaying,
@@ -124,7 +127,7 @@ class MediaBottomSheet extends React.Component{
 
   content = () => {
     const {isLoaded, isPlaying, isBuffering, audioDuration, audioPosition} = this.state;
-    const {info} = this.props.media;
+    const {media} = this.props;
     return (
       <View style={{
         backgroundColor: '#242424', height, paddingHorizontal: 15, borderRadius: 20,
@@ -136,12 +139,9 @@ class MediaBottomSheet extends React.Component{
         shadowOpacity: .2,
         shadowRadius: 4,
       }}>
-        <View style={{alignItems: 'center', marginVertical: 16}}>
-          <Button onPress={() => this.bottomSheetRef.current.snapTo(1)} transparent>
-            <View style={{width: 40, height:6, borderRadius: 8, backgroundColor: 'grey'}}></View>
-          </Button>
-        </View>
+
         <MediaPlayScreen
+          bottomSheetRef={this.bottomSheetRef}
           _getSeekSliderPosition = {this._getSeekSliderPosition}
           _onSeekSliderSlidingComplete = {this._onSeekSliderSlidingComplete}
           isLoaded = {isLoaded}
@@ -149,7 +149,7 @@ class MediaBottomSheet extends React.Component{
           isBuffering = {isBuffering}
           audioDuration = {audioDuration}
           audioPosition = {audioPosition}
-          media = {info}
+          media = {media}
           onPlayPausePressed = {this.onPlayPausePressed}
           playNext = {this.playNext}
           playPrevious = {this.playPrevious}
@@ -169,7 +169,7 @@ class MediaBottomSheet extends React.Component{
             onPress={() => this.bottomSheetRef.current.snapTo(0)} s
             tyle={{flex: 1}}>
             <View style={{justifyContent: 'space-between', flexDirection: 'row', height: '100%'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
                 <Image
                   style={{
                     shadowOffset:{  width: 10,  height: 10},
@@ -177,7 +177,7 @@ class MediaBottomSheet extends React.Component{
                     shadowOpacity: 1.0,
                     height: 56, width: 56, marginRight: 10}}
                   source={{uri: info.cover}}/>
-                <Text style={{fontSize: 16, color: PRIMARY_FONT_COLOR}}> {info.title} </Text>
+                <Text style={{fontSize: 16, color: PRIMARY_FONT_COLOR, flex: 1}} numberOfLines={1}> {info.title} </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 15}}>
 
@@ -194,8 +194,14 @@ class MediaBottomSheet extends React.Component{
           </TouchableOpacity>
         </View>
         <BottomSheet
-          onOpenStart = {() => this.props.toggleBottomTabs(false)}
-          onCloseEnd = {() => this.props.toggleBottomTabs(true)}
+          onOpenStart = {() => {
+            this.props.toggleBottomTabs(false);
+            StatusBar.setHidden(true);
+          }}
+          onCloseEnd = {() => {
+            this.props.toggleBottomTabs(true)
+            StatusBar.setHidden(false);
+          }}
           ref={this.bottomSheetRef}
           snapPoints = {['100%', 0]}
           renderHeader = {this.content}
