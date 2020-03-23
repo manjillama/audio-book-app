@@ -1,0 +1,39 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "@react-native-community/masked-view": "^0.1.5",
+    "axios": "^0.19.2",
+    "expo": "~36.0.0",
+    "expo-av": "~8.0.0",
+    "expo-font": "~8.0.0",
+    "native-base": "^2.13.8",
+    "react": "~16.9.0",
+    "react-dom": "~16.9.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-gesture-handler": "~1.5.0",
+    "react-native-reanimated": "~1.4.0",
+    "react-native-safe-area-context": "0.6.0",
+    "react-native-screens": "2.0.0-alpha.12",
+    "react-native-swift": "^1.2.2",
+    "react-native-web": "~0.11.7",
+    "react-navigation": "^4.2.2",
+    "react-navigation-stack": "^2.2.2",
+    "react-navigation-tabs": "^2.8.2",
+    "react-redux": "^7.2.0",
+    "reanimated-bottom-sheet": "^1.0.0-alpha.19",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "babel-preset-expo": "~8.0.0"
+  },
+  "private": true
+}
