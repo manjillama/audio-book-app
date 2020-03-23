@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
   },
   panelItem: {
     marginHorizontal: -15,
-    paddingVertical: 8
+    paddingVertical: 8,
+    flex: 1
   }
 });
 

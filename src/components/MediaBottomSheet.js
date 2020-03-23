@@ -25,24 +25,22 @@ class MediaBottomSheet extends React.Component{
       audioDuration: 0,
       audioPosition: 0,
       isBuffering: true,
-      audioSrc: this.props.media.currentlyPlaying.source
     };
     this._onPlaybackStatusUpdate = this._onPlaybackStatusUpdate.bind(this);
 
     this.bottomSheetRef = React.createRef();
   }
 
-  async componentDidUpdate(prevProps, prevState, snapshot) {
-    const { media } = this.props;
-    if (prevProps.media !== media) {
-      const { source } = media.currentlyPlaying;
-
-      await this.audio.unloadAsync();
-      await this.audio.loadAsync({uri: source});
-      this.audio.playAsync();
-    }
-  }
-
+  /**
+  @Desc
+  * When component is first mounted
+  ** Audio sound is initialized
+  ** Basic setup/configuration for android and ios
+  ** Wiring _onPlaybackStatusUpdate function with audio object
+      _onPlaybackStatusUpdate is called in regular interval updating audio status
+        i.e. isPlaying, isBuffering, isLoading, positions etc
+  ** Load new sound invoking loadNewAudio() function
+  */
   async componentDidMount(){
     this.audio = new Audio.Sound();
     Audio.setAudioModeAsync({
@@ -54,19 +52,75 @@ class MediaBottomSheet extends React.Component{
     })
 
     this.audio.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
-
-    await this.audio.loadAsync({uri: this.state.audioSrc});
-    this.audio.playAsync();
+    await this.loadNewAudio();
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    const { media } = this.props;
+    if (prevProps.media !== media) {
+
+      if(this.state.isLoaded)
+        await this.audio.unloadAsync();
+
+      if(await this.loadNewAudio())
+        this.audio.playAsync();
+    }
+  }
+
+  /*
+  * Unload audio when component unmounts
+  */
   componentWillUnmount(){
     this.audio.unloadAsync();
   }
 
+  /**
+  @Desc
+  * Only one audio will have be loaded at a time, hence if one audio is already in a loading process
+  * Another audio has to wait for previous audio to be finished loading first
+
+  - If no audio is currently in loading process
+    - set isLoaded state to true
+    - load audio
+      - Check is audio source has been updated
+      - i.e. if new audio has been loaded while the previous audio was already in loading process
+        - Load new audio
+
+
+  @Returns
+  true or fasle
+  returning true will auto play audio as used in componentDidMount() function
+  */
+  loadNewAudio = async () => {
+
+    if(!this.state.isLoading){
+      this.setState({isLoading: true});
+      const { source } = this.props.media.currentlyPlaying;
+      await this.audio.loadAsync({uri: source});
+
+      /*
+      * If playback source has been updated already
+      * Happens when user changes another song while one is already in loading process
+      */
+      const updatedSrc = this.props.media.currentlyPlaying.source;
+      if(source !== updatedSrc){
+        await this.audio.unloadAsync();
+        await this.audio.loadAsync({uri: updatedSrc});
+      }
+      this.setState({isLoading: false});
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  /*
+  * Is wired with audio object to be called in a regular interval
+  * Updating audio status in real time
+  */
   _onPlaybackStatusUpdate({isPlaying, isBuffering, positionMillis, durationMillis, isLoaded, didJustFinish}){
     if(didJustFinish)
       return this.playNext();
-
     this.setState({
       isLoaded,
       isPlaying,
@@ -76,6 +130,9 @@ class MediaBottomSheet extends React.Component{
     })
   }
 
+  /*
+  * Returns current audio seek slider positon
+  */
   _getSeekSliderPosition = () => {
     if (
       this.audio != null &&
@@ -87,6 +144,9 @@ class MediaBottomSheet extends React.Component{
     return 0;
   }
 
+  /*
+  * Plays audio from seek position
+  */
   _onSeekSliderSlidingComplete = (value) => {
     if (this.audio != null) {
       const seekPosition = value * this.state.audioDuration;
@@ -94,6 +154,9 @@ class MediaBottomSheet extends React.Component{
     }
   };
 
+  /*
+  * Plays or pause current audio
+  */
   onPlayPausePressed = async () => {
     if(this.audio != null){
       if (this.state.isPlaying) {
@@ -104,6 +167,11 @@ class MediaBottomSheet extends React.Component{
     }
   };
 
+  /*
+  * Fetches current playing songs index number from mediaList array
+  * if next index is lesser than media.length
+    Update currentlyPlaying audio
+  */
   playNext = async () => {
     const { media, updateMedia } = this.props;
     const { mediaList, currentlyPlaying } = media;
@@ -114,6 +182,11 @@ class MediaBottomSheet extends React.Component{
       updateMedia({...media, currentlyPlaying: mediaList[index+1]});
   }
 
+  /*
+  * Fetches current playing songs index number from mediaList array
+  * if previous index is greater than or equal to 0
+    Update currentlyPlaying audio
+  */
   playPrevious = async () => {
     const { media, updateMedia } = this.props;
     const { mediaList, currentlyPlaying } = media;
@@ -124,6 +197,7 @@ class MediaBottomSheet extends React.Component{
       updateMedia({...media, currentlyPlaying: mediaList[index-1]});
 
   }
+
 
   content = () => {
     const {isLoaded, isPlaying, isBuffering, audioDuration, audioPosition} = this.state;
