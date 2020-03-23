@@ -130,7 +130,7 @@ class MediaBottomSheet extends React.Component{
     const {media} = this.props;
     return (
       <LinearGradient
-      colors={['#0fa66f', '#3aa380', '#385e51', '#000000']}
+      colors={['#016c52', '#097754', '#0e4331', '#121212']}
       style={{
         height, paddingHorizontal: 15, borderRadius: 20,
         shadowColor: "#000",
