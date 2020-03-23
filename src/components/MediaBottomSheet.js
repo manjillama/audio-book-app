@@ -53,6 +53,7 @@ class MediaBottomSheet extends React.Component{
 
     this.audio.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
     await this.loadNewAudio();
+    this.audio.playAsync();
   }
 
   async componentDidUpdate(prevProps, prevState) {
