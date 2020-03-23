@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { updateMedia } from '../actions/media';
 import { toggleBottomTabs } from '../actions/showBottomTabs';
 import { PRIMARY_FONT_COLOR  } from '../constants/Colors';
-
+import { LinearGradient } from 'expo-linear-gradient';
 const { height } = layout.window;
 class MediaBottomSheet extends React.Component{
 
@@ -129,8 +129,10 @@ class MediaBottomSheet extends React.Component{
     const {isLoaded, isPlaying, isBuffering, audioDuration, audioPosition} = this.state;
     const {media} = this.props;
     return (
-      <View style={{
-        backgroundColor: '#242424', height, paddingHorizontal: 15, borderRadius: 20,
+      <LinearGradient
+      colors={['#0fa66f', '#3aa380', '#385e51', '#000000']}
+      style={{
+        height, paddingHorizontal: 15, borderRadius: 20,
         shadowColor: "#000",
         shadowOffset:{
         width: 0,
@@ -138,23 +140,25 @@ class MediaBottomSheet extends React.Component{
         },
         shadowOpacity: .2,
         shadowRadius: 4,
-      }}>
+      }}
+      >
 
-        <MediaPlayScreen
-          bottomSheetRef={this.bottomSheetRef}
-          _getSeekSliderPosition = {this._getSeekSliderPosition}
-          _onSeekSliderSlidingComplete = {this._onSeekSliderSlidingComplete}
-          isLoaded = {isLoaded}
-          isPlaying = {isPlaying}
-          isBuffering = {isBuffering}
-          audioDuration = {audioDuration}
-          audioPosition = {audioPosition}
-          media = {media}
-          onPlayPausePressed = {this.onPlayPausePressed}
-          playNext = {this.playNext}
-          playPrevious = {this.playPrevious}
-        />
-      </View>
+
+          <MediaPlayScreen
+            bottomSheetRef={this.bottomSheetRef}
+            _getSeekSliderPosition = {this._getSeekSliderPosition}
+            _onSeekSliderSlidingComplete = {this._onSeekSliderSlidingComplete}
+            isLoaded = {isLoaded}
+            isPlaying = {isPlaying}
+            isBuffering = {isBuffering}
+            audioDuration = {audioDuration}
+            audioPosition = {audioPosition}
+            media = {media}
+            onPlayPausePressed = {this.onPlayPausePressed}
+            playNext = {this.playNext}
+            playPrevious = {this.playPrevious}
+          />
+      </LinearGradient>
     )
   }
 
