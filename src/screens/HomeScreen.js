@@ -147,3 +147,34 @@ function mapStateToProps({mediaList}){
 }
 
 export default connect(mapStateToProps, null)(HomeScreen);
+
+/*
+<Row>
+  <Col style={styles.listPanel}>
+    <View style={styles.panelHeader}>
+      <H1 style={styles.panelTitle}>Editor's pick</H1>
+    </View>
+    <FlatList
+      data={DATA.filter(book => {
+        return myPicks.some(id => {
+          console.log(id);
+          return book.Boxid === id;
+        })
+      })}
+      horizontal
+      showsHorizontalScrollIndicator = {false}
+      renderItem={({ item }) => {
+        return <TouchableOpacity onPress={() => this.props.navigation.navigate('BookView', item)}>
+          <Image
+              source={{uri: item.cover}}
+              style={[styles.panelImage, {height:width/2.7,width: width/2.7}]}
+            />
+          <Text numberOfLines={1} style={styles.bookTitle}>{item.title}</Text>
+          <Text numberOfLines={1} style={{color: FADE_COLOR, marginLeft: 15, width: width/2.7}}>{item.author}</Text>
+        </TouchableOpacity>
+      }}
+      keyExtractor={item => item.title}
+    />
+  </Col>
+</Row>
+*/

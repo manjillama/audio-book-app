@@ -10,6 +10,7 @@ class BookViewScreen extends Component{
 
   render(){
     const {title, cover, audios, author, narrator, description, Runtime, Tapedby} = this.props.navigation.state.params;
+    console.log(this.props.navigation.state.params.Boxid, `- ${title}`);
     return (
       <Container style={{backgroundColor: PRIMARY_BACKGROUND_COLOR}}>
         <Header transparent iosBarStyle={"light-content"}>

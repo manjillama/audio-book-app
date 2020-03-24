@@ -12,11 +12,7 @@ import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs';
 
 import HomeScreen from './src/screens/HomeScreen';
 import SearchScreen from './src/screens/SearchScreen';
-import MyBooksScreen from './src/screens/MyBooksScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
 import BookViewScreen from './src/screens/BookViewScreen';
-import AboutScreen from './src/screens/about/AboutScreen';
-
 
 import { PRIMARY_COLOR } from './src/constants/Colors';
 

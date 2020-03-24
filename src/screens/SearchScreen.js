@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, Footer, H1, Right, Icon, Button, Item, Input} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -14,14 +14,24 @@ const SearchScreen = ({navigation}) => {
 
   function onSearch(text){
     setTerm(text);
-    if(this.timeout)
-      clearTimeout(this.timeout);
-
-    this.timeout = setTimeout(() => {
-      const books = DATA.filter(book => book.title.includes(term.trim()));
-      setAudioBooks(books);
-    }, 300);
   }
+
+  useEffect(() => {
+
+
+
+    if(term && term.length >= 3){
+      if(this.timeout)
+        clearTimeout(this.timeout);
+
+      this.timeout = setTimeout(() => {
+        const books = DATA.filter(book => book.title.toLowerCase().includes(term.toLowerCase().trim()));
+        setAudioBooks(books);
+      }, 300);
+    }
+
+
+  }, [term])
 
   return (
     <Container style={{backgroundColor: PRIMARY_BACKGROUND_COLOR}}>
