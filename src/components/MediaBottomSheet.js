@@ -189,13 +189,25 @@ class MediaBottomSheet extends React.Component{
     Update currentlyPlaying audio
   */
   playPrevious = async () => {
-    const { media, updateMedia } = this.props;
-    const { mediaList, currentlyPlaying } = media;
-    const { title } = currentlyPlaying;
+    const { audioPosition } = this.state;
 
-    const index = mediaList.findIndex(x => x.title === title);
-    if(index - 1 >= 0)
-      updateMedia({...media, currentlyPlaying: mediaList[index-1]});
+    /**
+    * If audio position is greater than 1 sec
+      - Play from start
+      Else
+      - Play Previous audio
+    */
+    if(audioPosition > 1000){
+      this.audio.playFromPositionAsync(0);
+    }else{
+
+      const { media, updateMedia } = this.props;
+      const { mediaList, currentlyPlaying } = media;
+      const { title } = currentlyPlaying;
+      const index = mediaList.findIndex(x => x.title === title);
+      if(index - 1 >= 0)
+        updateMedia({...media, currentlyPlaying: mediaList[index-1]});
+    }
 
   }
 
