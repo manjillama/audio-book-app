@@ -192,12 +192,12 @@ class MediaBottomSheet extends React.Component{
     const { audioPosition } = this.state;
 
     /**
-    * If audio position is greater than 1 sec
+    * If audio position is greater than 3 sec
       - Play from start
       Else
       - Play Previous audio
     */
-    if(audioPosition > 1000){
+    if(audioPosition > 3000){
       this.audio.playFromPositionAsync(0);
     }else{
 
