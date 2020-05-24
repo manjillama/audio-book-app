@@ -1,17 +1,18 @@
-import React from "react";
-import { Text, View, Image, TouchableOpacity, StatusBar } from "react-native";
-import { Button } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import BottomSheet from "reanimated-bottom-sheet";
-import MediaPlayScreen from "./MediaPlayScreen";
-import layout from "../constants/Layout";
-import { Audio } from "expo-av";
-import Spinner from "./Spinner";
-import { connect } from "react-redux";
-import { updateMedia } from "../actions/media";
-import { toggleBottomTabs } from "../actions/showBottomTabs";
-import { PRIMARY_FONT_COLOR } from "../constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
+import React from 'react';
+import { Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { Button } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import BottomSheet from 'reanimated-bottom-sheet';
+import MediaPlayScreen from './MediaPlayScreen';
+import layout from '../constants/Layout';
+import { Audio } from 'expo-av';
+import Spinner from './Spinner';
+import { connect } from 'react-redux';
+import { updateMedia } from '../actions/media';
+import { toggleBottomTabs } from '../actions/showBottomTabs';
+import { PRIMARY_FONT_COLOR } from '../constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
+
 const { height } = layout.window;
 class MediaBottomSheet extends React.Component {
   constructor(props) {
@@ -23,13 +24,14 @@ class MediaBottomSheet extends React.Component {
       isPlaying: false,
       audioDuration: 0,
       audioPosition: 0,
-      isBuffering: true
+      isBuffering: true,
     };
     this._onPlaybackStatusUpdate = this._onPlaybackStatusUpdate.bind(this);
 
     this.bottomSheetRef = React.createRef();
+    const hello = 'hello';
+    console.log(hello);
   }
-
   /**
   @Desc
   * When component is first mounted
@@ -47,7 +49,7 @@ class MediaBottomSheet extends React.Component {
       playsInSilentModeIOS: true,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-      playThroughEarpieceAndroid: false
+      playThroughEarpieceAndroid: false,
     });
 
     this.audio.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
@@ -84,7 +86,7 @@ class MediaBottomSheet extends React.Component {
         - Load new audio
 
 
-  @Returns
+  @return {boolean}
   true or fasle
   returning true will auto play audio as used in componentDidMount() function
   */
@@ -120,7 +122,7 @@ class MediaBottomSheet extends React.Component {
     positionMillis,
     durationMillis,
     isLoaded,
-    didJustFinish
+    didJustFinish,
   }) {
     if (didJustFinish) return this.playNext();
     this.setState({
@@ -128,7 +130,7 @@ class MediaBottomSheet extends React.Component {
       isPlaying,
       isBuffering,
       audioPosition: positionMillis || 0,
-      audioDuration: durationMillis || 1
+      audioDuration: durationMillis || 1,
     });
   }
 
@@ -149,7 +151,7 @@ class MediaBottomSheet extends React.Component {
   /*
    * Plays audio from seek position
    */
-  _onSeekSliderSlidingComplete = value => {
+  _onSeekSliderSlidingComplete = (value) => {
     if (this.audio != null) {
       const seekPosition = value * this.state.audioDuration;
       this.audio.playFromPositionAsync(seekPosition);
@@ -179,7 +181,7 @@ class MediaBottomSheet extends React.Component {
     const { mediaList, currentlyPlaying } = media;
     const { title } = currentlyPlaying;
 
-    const index = mediaList.findIndex(x => x.title === title);
+    const index = mediaList.findIndex((x) => x.title === title);
     if (index + 1 < mediaList.length)
       updateMedia({ ...media, currentlyPlaying: mediaList[index + 1] });
   };
@@ -204,7 +206,7 @@ class MediaBottomSheet extends React.Component {
       const { media, updateMedia } = this.props;
       const { mediaList, currentlyPlaying } = media;
       const { title } = currentlyPlaying;
-      const index = mediaList.findIndex(x => x.title === title);
+      const index = mediaList.findIndex((x) => x.title === title);
       if (index - 1 >= 0)
         updateMedia({ ...media, currentlyPlaying: mediaList[index - 1] });
     }
@@ -216,23 +218,23 @@ class MediaBottomSheet extends React.Component {
       isPlaying,
       isBuffering,
       audioDuration,
-      audioPosition
+      audioPosition,
     } = this.state;
     const { media } = this.props;
     return (
       <LinearGradient
-        colors={["#016c52", "#097754", "#0e4331", "#121212"]}
+        colors={['#016c52', '#097754', '#0e4331', '#121212']}
         style={{
           height,
           paddingHorizontal: 15,
           borderRadius: 20,
-          shadowColor: "#000",
+          shadowColor: '#000',
           shadowOffset: {
             width: 0,
-            height: 0
+            height: 0,
           },
           shadowOpacity: 0.2,
-          shadowRadius: 4
+          shadowRadius: 4,
         }}
       >
         <MediaPlayScreen
@@ -259,7 +261,7 @@ class MediaBottomSheet extends React.Component {
 
     return (
       <>
-        <View style={{ backgroundColor: "#2a2a2a", width: "100%", height: 56 }}>
+        <View style={{ backgroundColor: '#2a2a2a', width: '100%', height: 56 }}>
           <TouchableOpacity
             transparent
             onPress={() => this.bottomSheetRef.current.snapTo(0)}
@@ -268,22 +270,22 @@ class MediaBottomSheet extends React.Component {
           >
             <View
               style={{
-                justifyContent: "space-between",
-                flexDirection: "row",
-                height: "100%"
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                height: '100%',
               }}
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+                style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
               >
                 <Image
                   style={{
                     shadowOffset: { width: 10, height: 10 },
-                    shadowColor: "black",
+                    shadowColor: 'black',
                     shadowOpacity: 1.0,
                     height: 56,
                     width: 56,
-                    marginRight: 10
+                    marginRight: 10,
                   }}
                   source={{ uri: info.cover }}
                 />
@@ -291,15 +293,15 @@ class MediaBottomSheet extends React.Component {
                   style={{ fontSize: 16, color: PRIMARY_FONT_COLOR, flex: 1 }}
                   numberOfLines={1}
                 >
-                  {" "}
-                  {info.title}{" "}
+                  {' '}
+                  {info.title}{' '}
                 </Text>
               </View>
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginRight: 15
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: 15,
                 }}
               >
                 {isBuffering && <Spinner />}
@@ -308,20 +310,20 @@ class MediaBottomSheet extends React.Component {
                   transparent
                   onPress={this.onPlayPausePressed}
                   style={{
-                    justifyContent: "center",
+                    justifyContent: 'center',
                     borderRadius: 48 / 2,
                     height: 48,
-                    width: 48
+                    width: 48,
                   }}
                   disabled={!isLoaded}
                 >
                   <Ionicons
                     style={[
                       !isLoaded && { opacity: 0.3 },
-                      { color: PRIMARY_FONT_COLOR }
+                      { color: PRIMARY_FONT_COLOR },
                     ]}
                     size={36}
-                    name={isPlaying ? "ios-pause" : "ios-play"}
+                    name={isPlaying ? 'ios-pause' : 'ios-play'}
                   />
                 </Button>
               </View>
@@ -338,7 +340,7 @@ class MediaBottomSheet extends React.Component {
             StatusBar.setHidden(false);
           }}
           ref={this.bottomSheetRef}
-          snapPoints={["100%", 0]}
+          snapPoints={['100%', 0]}
           renderHeader={this.content}
           initialSnap={1}
         />
@@ -351,7 +353,6 @@ function mapStateToProps({ media }) {
   return { media };
 }
 
-export default connect(
-  mapStateToProps,
-  { updateMedia, toggleBottomTabs }
-)(MediaBottomSheet);
+export default connect(mapStateToProps, { updateMedia, toggleBottomTabs })(
+  MediaBottomSheet
+);
